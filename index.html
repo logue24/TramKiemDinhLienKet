@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trạm Kiểm Định Liên Kết — Tra Cứu Độ An Toàn Website</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1F3EE;
+    --paper-card:#FBFCF9;
+    --ink:#1A211C;
+    --ink-soft:#4A5850;
+    --ink-faint:#8B9188;
+    --line:#CDD3C6;
+    --line-soft:#DEE2D8;
+    --seal-green:#2A5F42;
+    --seal-green-bg:#E3EEE6;
+    --seal-amber:#8A5A1A;
+    --seal-amber-bg:#F3E9D4;
+    --seal-red:#8F2E22;
+    --seal-red-bg:#F5E4E0;
+    --seal-grey:#565B54;
+    --seal-grey-bg:#E7E9E3;
+    --radius:3px;
+    --font-display:'Fraunces',Georgia,serif;
+    --font-body:'Be Vietnam Pro',-apple-system,BlinkMacSystemFont,sans-serif;
+    --font-mono:'IBM Plex Mono','Courier New',monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  :focus-visible{outline:2px solid var(--seal-green);outline-offset:2px;}
+
+  .page-wrap{
+    max-width:720px;
+    margin:0 auto;
+    padding:36px 20px 64px;
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    border-bottom:3px double var(--ink);
+    padding-bottom:18px;
+    margin-bottom:30px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .mark{flex:none;color:var(--seal-green);}
+  .masthead h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.55rem;
+    letter-spacing:-0.01em;
+    margin:0 0 2px;
+  }
+  .tagline{
+    margin:0;
+    font-family:var(--font-mono);
+    font-size:0.78rem;
+    letter-spacing:0.02em;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:0 1px 2px rgba(26,33,28,0.06);
+    padding:24px;
+    margin-bottom:18px;
+  }
+
+  /* ---------- Input card ---------- */
+  .field-label{
+    display:block;
+    font-size:0.82rem;
+    font-weight:600;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    margin-bottom:9px;
+  }
+  .input-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .url-input{
+    flex:1 1 260px;
+    min-width:0;
+    padding:12px 14px;
+    font-family:var(--font-mono);
+    font-size:0.92rem;
+    color:var(--ink);
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+  }
+  .url-input::placeholder{color:var(--ink-faint);}
+  .url-input:focus{border-color:var(--seal-green);}
+  .btn-start{
+    flex:none;
+    padding:12px 22px;
+    background:var(--ink);
+    color:var(--paper);
+    border:1px solid var(--ink);
+    border-radius:var(--radius);
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:0.92rem;
+    letter-spacing:0.01em;
+    cursor:pointer;
+    transition:background 0.15s ease, transform 0.1s ease;
+  }
+  .btn-start:hover:not(:disabled){background:var(--seal-green);border-color:var(--seal-green);}
+  .btn-start:active:not(:disabled){transform:translateY(1px);}
+  .btn-start:disabled{opacity:0.55;cursor:default;}
+  .input-error{
+    margin:10px 0 0;
+    font-size:0.85rem;
+    color:var(--seal-red);
+  }
+
+  /* ---------- Phase cards ---------- */
+  .phase-header{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+    padding-bottom:12px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .phase-num{
+    font-family:var(--font-mono);
+    font-size:0.72rem;
+    font-weight:500;
+    color:#fff;
+    background:var(--ink);
+    padding:2px 8px;
+    border-radius:2px;
+    letter-spacing:0.03em;
+  }
+  .phase-title{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.05rem;
+  }
+  .phase-status{
+    margin-left:auto;
+    font-family:var(--font-mono);
+    font-size:0.75rem;
+    color:var(--ink-faint);
+  }
+
+  .finding-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+  .finding{
+    position:relative;
+    padding-left:20px;
+    font-size:0.92rem;
+    color:var(--ink);
+  }
+  .finding::before{
+    content:'';
+    position:absolute;
+    left:0;top:0.5em;
+    width:8px;height:8px;
+    border-radius:50%;
+  }
+  .finding-ok::before{background:var(--seal-green);}
+  .finding-info::before{background:var(--seal-grey);}
+  .finding-warn::before{background:var(--seal-amber);}
+  .finding-danger::before{background:var(--seal-red);}
+
+  .agent-log{
+    font-family:var(--font-mono);
+    font-size:0.82rem;
+    color:var(--ink-soft);
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    max-height:220px;
+    overflow-y:auto;
+  }
+  .log-line{animation:log-in 0.3s ease both;word-break:break-word;}
+  .log-pending{color:var(--ink-faint);}
+  @keyframes log-in{from{opacity:0;transform:translateY(3px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ---------- Results ---------- */
+  .results-card{padding:32px 24px;}
+  .case-id{
+    font-family:var(--font-mono);
+    font-size:0.72rem;
+    color:var(--ink-faint);
+    text-align:center;
+    letter-spacing:0.03em;
+    margin-bottom:6px;
+  }
+  .stamp-wrap{display:flex;justify-content:center;margin-bottom:20px;}
+  .verdict-stamp{
+    width:168px;height:168px;
+    animation:stamp-down 0.55s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  @keyframes stamp-down{
+    0%{transform:scale(2.1) rotate(-8deg);opacity:0;}
+    55%{transform:scale(0.94) rotate(-8deg);opacity:1;}
+    78%{transform:scale(1.04) rotate(-8deg);}
+    100%{transform:scale(1) rotate(-8deg);opacity:1;}
+  }
+  .stamp-svg{width:100%;height:100%;overflow:visible;}
+  .stamp-score{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:44px;
+    fill:currentColor;
+  }
+  .stamp-label{
+    font-family:var(--font-mono);
+    font-weight:500;
+    font-size:13px;
+    letter-spacing:0.03em;
+    fill:currentColor;
+  }
+  .stamp-green{color:var(--seal-green);}
+  .stamp-amber{color:var(--seal-amber);}
+  .stamp-red{color:var(--seal-red);}
+  .stamp-grey{color:var(--seal-grey);}
+
+  .summary{
+    text-align:center;
+    font-family:var(--font-display);
+    font-size:1.15rem;
+    font-weight:500;
+    max-width:480px;
+    margin:0 auto 16px;
+  }
+  .tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:26px;}
+  .tag{
+    font-size:0.78rem;
+    font-weight:600;
+    padding:4px 11px;
+    border-radius:20px;
+    border:1px solid transparent;
+  }
+  .tag-green{background:var(--seal-green-bg);color:var(--seal-green);border-color:var(--seal-green);}
+  .tag-amber{background:var(--seal-amber-bg);color:var(--seal-amber);border-color:var(--seal-amber);}
+  .tag-red{background:var(--seal-red-bg);color:var(--seal-red);border-color:var(--seal-red);}
+  .tag-grey{background:var(--seal-grey-bg);color:var(--seal-grey);border-color:var(--seal-grey);}
+
+  .result-section{
+    padding-top:18px;
+    margin-top:18px;
+    border-top:1px solid var(--line-soft);
+  }
+  .result-section h3{
+    font-size:0.78rem;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--ink-soft);
+    margin:0 0 10px;
+  }
+  .result-section ul{margin:0;padding-left:20px;}
+  .result-section li{margin-bottom:6px;font-size:0.92rem;}
+  .result-section.warnings h3{color:var(--seal-red);}
+  .result-section.warnings{background:var(--seal-red-bg);margin-left:-24px;margin-right:-24px;padding-left:24px;padding-right:24px;border-top:none;}
+
+  .raw-data{margin-top:18px;}
+  .raw-data summary{
+    cursor:pointer;
+    font-size:0.78rem;
+    color:var(--ink-faint);
+    font-family:var(--font-mono);
+  }
+  .raw-data pre{
+    margin-top:10px;
+    background:var(--ink);
+    color:#DCE4DE;
+    padding:14px;
+    border-radius:var(--radius);
+    font-family:var(--font-mono);
+    font-size:0.75rem;
+    overflow-x:auto;
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+
+  /* ---------- Error card ---------- */
+  .error-card{border-color:var(--seal-red);}
+  .error-title{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.05rem;
+    color:var(--seal-red);
+    margin:0 0 6px;
+  }
+  .error-detail{margin:0 0 14px;font-size:0.9rem;color:var(--ink-soft);}
+  .btn-retry{
+    padding:10px 18px;
+    background:transparent;
+    border:1px solid var(--seal-red);
+    color:var(--seal-red);
+    border-radius:var(--radius);
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:0.85rem;
+    cursor:pointer;
+  }
+  .btn-retry:hover{background:var(--seal-red-bg);}
+
+  /* ---------- Footer ---------- */
+  .footer{margin-top:30px;}
+  .how-it-works summary{
+    cursor:pointer;
+    font-size:0.85rem;
+    font-weight:600;
+    color:var(--ink-soft);
+  }
+  .how-content{
+    margin-top:12px;
+    font-size:0.86rem;
+    color:var(--ink-soft);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .how-content strong{color:var(--ink);}
+
+  [hidden]{display:none !important;}
+
+  @media (max-width:520px){
+    .page-wrap{padding:24px 14px 48px;}
+    .masthead h1{font-size:1.3rem;}
+    .input-row{flex-direction:column;}
+    .btn-start{width:100%;}
+    .verdict-stamp{width:140px;height:140px;}
+    .stamp-score{font-size:38px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .verdict-stamp,.log-line{animation:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header class="masthead">
+    <div class="mark">
+      <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true">
+        <rect x="4" y="4" width="32" height="32" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M12 20 L18 26 L28 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Trạm Kiểm Định Liên Kết</h1>
+      <p class="tagline">TRA CỨU THẬT — KHÔNG MÔ PHỎNG, KHÔNG GIẢ LẬP</p>
+    </div>
+  </header>
+
+  <section class="card input-card">
+    <label class="field-label" for="urlInput">Đường dẫn cần kiểm định</label>
+    <div class="input-row">
+      <input type="text" id="urlInput" class="url-input" placeholder="https://vi-du.com/duong-dan-can-kiem-tra" autocomplete="off" spellcheck="false" autocapitalize="off">
+      <button id="startBtn" class="btn-start" type="button">Bắt Đầu Kiểm Định</button>
+    </div>
+    <p id="inputError" class="input-error" hidden></p>
+  </section>
+
+  <section class="card phase-card" id="phase1Card" hidden>
+    <div class="phase-header">
+      <span class="phase-num">GIAI ĐOẠN 1</span>
+      <span class="phase-title">Quét Cấu Trúc URL</span>
+      <span class="phase-status" id="phase1Status">tức thì · chạy tại trình duyệt</span>
+    </div>
+    <ul class="finding-list" id="structuralFindings"></ul>
+  </section>
+
+  <section class="card phase-card" id="phase2Card" hidden>
+    <div class="phase-header">
+      <span class="phase-num">GIAI ĐOẠN 2</span>
+      <span class="phase-title">AI Tra Cứu Chuyên Sâu</span>
+      <span class="phase-status" id="phase2Status">Claude + tìm kiếm web thật</span>
+    </div>
+    <div class="agent-log" id="agentLog"></div>
+  </section>
+
+  <section class="card results-card" id="resultsCard" hidden>
+    <p class="case-id" id="caseId"></p>
+    <div class="stamp-wrap">
+      <div class="verdict-stamp" id="verdictStamp"></div>
+    </div>
+    <p class="summary" id="resultSummary"></p>
+    <div class="tags" id="resultTags"></div>
+
+    <div class="result-section">
+      <h3>Phát Hiện Chính</h3>
+      <ul id="resultFindings"></ul>
+    </div>
+
+    <div class="result-section warnings" id="warningsSection" hidden>
+      <h3>⚠ Cảnh Báo</h3>
+      <ul id="resultWarnings"></ul>
+    </div>
+
+    <div class="result-section" id="sourcesSection" hidden>
+      <h3>Nguồn Đã Tra Cứu</h3>
+      <ul id="resultSources"></ul>
+    </div>
+
+    <details class="raw-data">
+      <summary>Xem dữ liệu thô từ AI (JSON) — để bạn tự kiểm chứng</summary>
+      <pre id="rawJson"></pre>
+    </details>
+  </section>
+
+  <section class="card error-card" id="errorCard" hidden>
+    <p class="error-title">Không thể hoàn tất kiểm định</p>
+    <p class="error-detail" id="errorDetail"></p>
+    <button class="btn-retry" id="retryBtn" type="button">Thử Lại</button>
+  </section>
+
+  <footer class="footer">
+    <details class="how-it-works">
+      <summary>Cách hoạt động của công cụ này</summary>
+      <div class="how-content">
+        <p><strong>Giai đoạn 1 — Quét cấu trúc:</strong> phân tích trực tiếp ngay trên trình duyệt của bạn (giao thức HTTPS, ký tự đáng ngờ, địa chỉ IP trần, dịch vụ rút gọn link, tên miền dạng Punycode...). Không cần mạng, luôn tức thì và xác định — không phải AI, không đoán.</p>
+        <p><strong>Giai đoạn 2 — AI tra cứu chuyên sâu:</strong> tên miền được gửi cho Claude kèm công cụ tìm kiếm web thật (web search). AI tự đặt câu hỏi tìm kiếm, đọc kết quả thật trên internet về uy tín và các báo cáo lừa đảo liên quan, rồi tổng hợp thành điểm số. Mục "Xem dữ liệu thô" cho phép bạn kiểm chứng chính kết quả AI trả về.</p>
+        <p><strong>Giới hạn cần biết:</strong> đây là công cụ tham khảo dựa trên nghiên cứu công khai, không phải phần mềm diệt virus và không quét mã độc trong file. Với trang web mới hoặc ít được nhắc tới, có thể chưa có đủ dữ liệu — công cụ sẽ báo "Chưa Đủ Dữ Liệu" thay vì đoán bừa là an toàn. Bản chạy này dùng quyền truy cập API tích hợp sẵn của Claude.ai, không cần khóa API riêng.</p>
+      </div>
+    </details>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var state = { analyzing:false };
+
+  function $(id){ return document.getElementById(id); }
+
+  /* ================= URL parsing & normalisation ================= */
+
+  function normalizeUrl(input){
+    var url = input.trim();
+    if(!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(url)){
+      url = 'https://' + url;
+    }
+    return url;
+  }
+
+  function parseUrl(input){
+    try{
+      var u = new URL(normalizeUrl(input));
+      if(!u.hostname || u.hostname.indexOf('.') === -1) return null;
+      return u;
+    }catch(e){
+      return null;
+    }
+  }
+
+  /* ================= Phase 1: structural analysis (real, deterministic) ================= */
+
+  function analyzeUrlStructure(urlObj){
+    var findings = [];
+    var score = 100;
+
+    function ding(text, points, severity){
+      findings.push({text:text, severity:severity});
+      score += points;
+    }
+
+    if(urlObj.protocol !== 'https:'){
+      ding('Không dùng kết nối HTTPS — dữ liệu có thể bị xem trộm trên đường truyền', -15, 'warn');
+    }
+    if(/^(\d{1,3}\.){3}\d{1,3}$/.test(urlObj.hostname)){
+      ding('Dùng địa chỉ IP trần thay vì tên miền — hiếm gặp ở trang hợp lệ', -25, 'danger');
+    }
+    if(urlObj.username || urlObj.password){
+      ding('URL chứa ký tự "@" — thủ thuật thường dùng để đánh lừa trình duyệt chuyển hướng', -30, 'danger');
+    }
+    if(urlObj.hostname.indexOf('xn--') !== -1){
+      ding('Tên miền dạng Punycode — có thể dùng ký tự trông giống hệt để giả thương hiệu', -12, 'warn');
+    }
+    var hostParts = urlObj.hostname.split('.');
+    if(hostParts.length > 4){
+      ding('Tên miền có nhiều lớp phụ bất thường (' + hostParts.length + ' phần)', -10, 'warn');
+    }
+    var shorteners = ['bit.ly','tinyurl.com','goo.gl','t.co','ow.ly','is.gd','buff.ly','shorte.st','rebrand.ly','cutt.ly','tiny.cc'];
+    if(shorteners.indexOf(urlObj.hostname.replace(/^www\./,'')) !== -1){
+      ding('Dùng dịch vụ rút gọn liên kết — không thể biết trước đích đến thật', -8, 'warn');
+    }
+    if(urlObj.href.length > 150){
+      ding('Độ dài URL bất thường (' + urlObj.href.length + ' ký tự)', -8, 'info');
+    }
+    if(urlObj.port && ['80','443',''].indexOf(urlObj.port) === -1){
+      ding('Dùng cổng kết nối không tiêu chuẩn (:' + urlObj.port + ')', -10, 'warn');
+    }
+    var domainBody = hostParts.slice(0, -1).join('.');
+    var hyphens = (domainBody.match(/-/g) || []).length;
+    if(hyphens >= 3){
+      ding('Tên miền chứa nhiều dấu gạch ngang — thường gặp ở tên miền nhái thương hiệu', -15, 'warn');
+    }
+
+    score = Math.max(0, Math.min(100, score));
+    if(findings.length === 0){
+      findings.push({text:'Không phát hiện dấu hiệu bất thường nào về mặt cấu trúc URL', severity:'ok'});
+    }
+    return {score:score, findings:findings};
+  }
+
+  function renderStructuralFindings(structural){
+    var list = $('structuralFindings');
+    list.innerHTML = '';
+    structural.findings.forEach(function(f){
+      var li = document.createElement('li');
+      li.className = 'finding finding-' + f.severity;
+      li.textContent = f.text;
+      list.appendChild(li);
+    });
+    $('phase1Card').hidden = false;
+    $('phase1Status').textContent = 'hoàn tất · ' + structural.findings.length + ' mục';
+  }
+
+  /* ================= Phase 2: AI deep research via Claude + web search ================= */
+
+  function buildPrompt(urlObj, structural){
+    var structuralText = structural.findings.map(function(f){ return '- ' + f.text; }).join('\n');
+    return [
+      'Bạn là chuyên gia an ninh mạng. Nhiệm vụ: điều tra độ an toàn và uy tín của một URL bằng cách tìm kiếm thông tin THẬT trên internet, không suy đoán.',
+      '',
+      'URL: ' + urlObj.href,
+      'Tên miền: ' + urlObj.hostname,
+      '',
+      'Kết quả quét cấu trúc URL tự động (chỉ mang tính tham khảo, không phải kết luận cuối):',
+      structuralText,
+      '',
+      'Hãy dùng công cụ tìm kiếm web để:',
+      '1. Xác định đây có phải trang hoặc doanh nghiệp hợp pháp, được biết đến hay không.',
+      '2. Tìm báo cáo lừa đảo, phishing, gian lận liên quan tới tên miền này.',
+      '3. Tìm đánh giá hoặc phản ánh thực tế của người dùng, nếu có.',
+      '4. Nếu tên miền gợi nhớ một thương hiệu lớn, kiểm tra xem đây có phải tên miền chính chủ hay là giả mạo/nhái.',
+      '',
+      'Sau khi tìm kiếm xong, trả lời DUY NHẤT bằng một đối tượng JSON hợp lệ (không markdown, không lời mở đầu, không giải thích thêm ngoài JSON) theo đúng cấu trúc sau:',
+      '{',
+      '"score": số nguyên 0-100 (0 = cực kỳ nguy hiểm, 100 = hoàn toàn uy tín),',
+      '"verdict": "safe" hoặc "caution" hoặc "dangerous" hoặc "unknown",',
+      '"verdict_label": nhãn tiếng Việt ngắn gọn tương ứng, ví dụ "An Toàn" / "Cẩn Trọng" / "Nguy Hiểm" / "Chưa Đủ Dữ Liệu",',
+      '"summary": tóm tắt 1-2 câu bằng tiếng Việt,',
+      '"findings": mảng 2 đến 5 chuỗi, mỗi chuỗi là một phát hiện cụ thể bằng tiếng Việt,',
+      '"warnings": mảng cảnh báo cụ thể bằng tiếng Việt (mảng rỗng nếu không có cảnh báo nào),',
+      '"tags": mảng nhãn chọn từ ["Trang uy tín","Nghi ngờ giả mạo","An toàn","Cần cảnh giác","Không nên truy cập","Chưa đủ dữ liệu"],',
+      '"sources": mảng mô tả ngắn các nguồn đã tham khảo trong lúc tìm kiếm (tên trang hoặc loại nguồn)',
+      '}',
+      '',
+      'Nếu không tìm đủ thông tin đáng tin cậy về tên miền này, đặt verdict là "unknown" và score quanh mức 50. TUYỆT ĐỐI KHÔNG mặc định là an toàn khi thiếu dữ liệu.'
+    ].join('\n');
+  }
+
+  function sendMessage(messages){
+    var controller = new AbortController();
+    var timeoutId = setTimeout(function(){ controller.abort(); }, 45000);
+    return fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      signal: controller.signal,
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:1000,
+        messages: messages,
+        tools:[{type:'web_search_20250305', name:'web_search'}]
+      })
+    }).then(function(response){
+      clearTimeout(timeoutId);
+      if(!response.ok){
+        var err = new Error('HTTP_' + response.status);
+        throw err;
+      }
+      return response.json();
+    }).catch(function(err){
+      clearTimeout(timeoutId);
+      throw err;
+    });
+  }
+
+  function dedupe(arr){
+    var seen = {};
+    var out = [];
+    arr.forEach(function(x){
+      if(!seen[x]){ seen[x] = true; out.push(x); }
+    });
+    return out;
+  }
+
+  function callDeepAnalysis(urlObj, structural){
+    var prompt = buildPrompt(urlObj, structural);
+    var messages = [{role:'user', content:prompt}];
+    var allContent = [];
+    var rounds = 0;
+
+    function loop(){
+      return sendMessage(messages).then(function(data){
+        var blocks = Array.isArray(data.content) ? data.content : [];
+        allContent = allContent.concat(blocks);
+        if(data.stop_reason === 'pause_turn' && rounds < 3){
+          rounds++;
+          messages = messages.concat([
+            {role:'assistant', content:blocks},
+            {role:'user', content:'Tiếp tục và đưa ra kết quả JSON cuối cùng.'}
+          ]);
+          return loop();
+        }
+        return allContent;
+      });
+    }
+
+    return loop().then(function(content){
+      var searchQueries = content
+        .filter(function(b){ return b && b.type === 'server_tool_use' && b.name === 'web_search' && b.input && b.input.query; })
+        .map(function(b){ return b.input.query; });
+
+      var textBlocks = content
+        .filter(function(b){ return b && b.type === 'text' && typeof b.text === 'string'; })
+        .map(function(b){ return b.text; })
+        .join('\n')
+        .trim();
+
+      if(!textBlocks){
+        throw new Error('EMPTY_RESPONSE');
+      }
+
+      var cleaned = textBlocks.replace(/```json/gi,'').replace(/```/g,'').trim();
+      var parsed;
+      try{
+        parsed = JSON.parse(cleaned);
+      }catch(e){
+        var match = cleaned.match(/\{[\s\S]*\}/);
+        if(match){
+          parsed = JSON.parse(match[0]);
+        }else{
+          throw new Error('PARSE_ERROR');
+        }
+      }
+      parsed.searchQueries = dedupe(searchQueries);
+      return parsed;
+    });
+  }
+
+  function revealAgentLog(queries){
+    return new Promise(function(resolve){
+      var log = $('agentLog');
+      log.innerHTML = '';
+      var lines = [];
+      if(queries.length === 0){
+        lines.push('AI đánh giá dựa trên kiến thức sẵn có, không cần tìm kiếm thêm.');
+      }else{
+        queries.forEach(function(q){ lines.push('Đã tìm kiếm: "' + q + '"'); });
+      }
+      lines.push('Đã tổng hợp xong kết quả.');
+
+      var i = 0;
+      function step(){
+        if(i >= lines.length){ resolve(); return; }
+        var div = document.createElement('div');
+        div.className = 'log-line';
+        div.textContent = '\u203A ' + lines[i];
+        log.appendChild(div);
+        i++;
+        setTimeout(step, 320);
+      }
+      step();
+    });
+  }
+
+  /* ================= Results rendering ================= */
+
+  var VERDICT_META = {
+    safe:{color:'green', defaultLabel:'An Toàn'},
+    caution:{color:'amber', defaultLabel:'Cẩn Trọng'},
+    dangerous:{color:'red', defaultLabel:'Nguy Hiểm'},
+    unknown:{color:'grey', defaultLabel:'Chưa Đủ Dữ Liệu'}
+  };
+
+  var TAG_COLOR_MAP = {
+    'Trang uy tín':'green',
+    'An toàn':'green',
+    'Nghi ngờ giả mạo':'red',
+    'Không nên truy cập':'red',
+    'Cần cảnh giác':'amber',
+    'Chưa đủ dữ liệu':'grey'
+  };
+
+  function escapeXml(str){
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function generateCaseId(){
+    var now = new Date();
+    var y = now.getFullYear();
+    var m = String(now.getMonth()+1).padStart(2,'0');
+    var d = String(now.getDate()).padStart(2,'0');
+    var rand = Math.random().toString(36).slice(2,6).toUpperCase();
+    return 'HỒ SƠ SỐ HS-' + y + m + d + '-' + rand;
+  }
+
+  function buildStamp(score, label, colorKey, isUnknown){
+    var wrap = $('verdictStamp');
+    wrap.className = 'verdict-stamp stamp-' + colorKey;
+    var uid = colorKey + Math.random().toString(36).slice(2,7);
+    var displayScore = isUnknown ? '?' : String(score);
+    wrap.innerHTML =
+      '<svg viewBox="0 0 220 220" class="stamp-svg" aria-hidden="true">' +
+        '<defs><filter id="rg-' + uid + '">' +
+          '<feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="4" result="n"/>' +
+          '<feDisplacementMap in="SourceGraphic" in2="n" scale="5"/>' +
+        '</filter></defs>' +
+        '<g filter="url(#rg-' + uid + ')" fill="none" stroke="currentColor">' +
+          '<circle cx="110" cy="110" r="98" stroke-width="4"/>' +
+          '<circle cx="110" cy="110" r="84" stroke-width="2"/>' +
+        '</g>' +
+        '<text x="110" y="104" text-anchor="middle" class="stamp-score">' + escapeXml(displayScore) + '</text>' +
+        '<text x="110" y="128" text-anchor="middle" class="stamp-label">' + escapeXml(label.toUpperCase()) + '</text>' +
+      '</svg>';
+  }
+
+  function renderFinalResult(result){
+    var verdictKey = VERDICT_META[result.verdict] ? result.verdict : 'unknown';
+    var meta = VERDICT_META[verdictKey];
+    var score = Number(result.score);
+    if(!isFinite(score)) score = 50;
+    score = Math.max(0, Math.min(100, Math.round(score)));
+    var label = result.verdict_label || meta.defaultLabel;
+
+    $('resultsCard').hidden = false;
+    $('caseId').textContent = generateCaseId();
+    buildStamp(score, label, meta.color, verdictKey === 'unknown');
+
+    $('resultSummary').textContent = result.summary || '';
+
+    var tagsWrap = $('resultTags');
+    tagsWrap.innerHTML = '';
+    (result.tags || []).forEach(function(t){
+      var span = document.createElement('span');
+      span.className = 'tag tag-' + (TAG_COLOR_MAP[t] || 'grey');
+      span.textContent = t;
+      tagsWrap.appendChild(span);
+    });
+
+    var findingsList = $('resultFindings');
+    findingsList.innerHTML = '';
+    (result.findings || []).forEach(function(f){
+      var li = document.createElement('li');
+      li.textContent = f;
+      findingsList.appendChild(li);
+    });
+
+    var warnings = result.warnings || [];
+    $('warningsSection').hidden = warnings.length === 0;
+    var warnList = $('resultWarnings');
+    warnList.innerHTML = '';
+    warnings.forEach(function(w){
+      var li = document.createElement('li');
+      li.textContent = w;
+      warnList.appendChild(li);
+    });
+
+    var sources = result.sources || [];
+    $('sourcesSection').hidden = sources.length === 0;
+    var srcList = $('resultSources');
+    srcList.innerHTML = '';
+    sources.forEach(function(s){
+      var li = document.createElement('li');
+      li.textContent = s;
+      srcList.appendChild(li);
+    });
+
+    var rawCopy = {};
+    Object.keys(result).forEach(function(k){ if(k !== 'searchQueries') rawCopy[k] = result[k]; });
+    $('rawJson').textContent = JSON.stringify(rawCopy, null, 2);
+
+    $('resultsCard').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  /* ================= Error handling ================= */
+
+  function showInputError(msg){
+    var el = $('inputError');
+    el.textContent = msg;
+    el.hidden = false;
+  }
+
+  function resetPanels(){
+    $('inputError').hidden = true;
+    $('phase1Card').hidden = true;
+    $('phase2Card').hidden = true;
+    $('resultsCard').hidden = true;
+    $('errorCard').hidden = true;
+    $('structuralFindings').innerHTML = '';
+    $('agentLog').innerHTML = '';
+  }
+
+  function showAnalysisError(err){
+    $('errorCard').hidden = false;
+    var msg = 'Đã có lỗi không xác định. Vui lòng thử lại.';
+    var code = err && err.message;
+    if(err && err.name === 'AbortError'){
+      msg = 'Quá thời gian chờ phản hồi từ AI (trên 45 giây). Vui lòng thử lại.';
+    }else if(code === 'EMPTY_RESPONSE'){
+      msg = 'Hệ thống AI không trả về nội dung nào. Vui lòng thử lại.';
+    }else if(code === 'PARSE_ERROR'){
+      msg = 'Không đọc được kết quả phân tích từ AI. Vui lòng thử lại.';
+    }else if(code && code.indexOf('HTTP_') === 0){
+      var status = code.split('_')[1];
+      if(status === '429'){
+        msg = 'Hệ thống đang quá tải (giới hạn tốc độ truy cập). Vui lòng chờ một chút rồi thử lại.';
+      }else{
+        msg = 'Lỗi kết nối tới hệ thống AI (mã lỗi ' + status + '). Vui lòng thử lại.';
+      }
+    }else if(err && err.name === 'TypeError'){
+      msg = 'Không thể kết nối mạng để tra cứu. Vui lòng kiểm tra kết nối internet và thử lại.';
+    }
+    $('errorDetail').textContent = msg;
+  }
+
+  /* ================= Main flow ================= */
+
+  function startAnalysis(){
+    if(state.analyzing) return;
+    var raw = $('urlInput').value;
+
+    resetPanels();
+
+    if(!raw.trim()){
+      showInputError('Vui lòng nhập link cần kiểm định.');
+      return;
+    }
+    var urlObj = parseUrl(raw);
+    if(!urlObj){
+      showInputError('Link không hợp lệ — vui lòng kiểm tra lại định dạng.');
+      return;
+    }
+
+    state.analyzing = true;
+    $('startBtn').disabled = true;
+    $('startBtn').textContent = 'Đang Kiểm Định…';
+
+    var structural = analyzeUrlStructure(urlObj);
+    renderStructuralFindings(structural);
+
+    $('phase2Card').hidden = false;
+    $('agentLog').innerHTML = '<div class="log-line log-pending">Đang phân tích chuyên sâu…</div>';
+
+    callDeepAnalysis(urlObj, structural)
+      .then(function(result){
+        return revealAgentLog(result.searchQueries || []).then(function(){
+          renderFinalResult(result);
+        });
+      })
+      .catch(function(err){
+        showAnalysisError(err);
+      })
+      .then(function(){
+        state.analyzing = false;
+        $('startBtn').disabled = false;
+        $('startBtn').textContent = 'Bắt Đầu Kiểm Định';
+      });
+  }
+
+  $('startBtn').addEventListener('click', startAnalysis);
+  $('urlInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ startAnalysis(); }
+  });
+  $('retryBtn').addEventListener('click', startAnalysis);
+
+})();
+</script>
+</body>
+</html>
